@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Taller de C#: aprende programando</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDF0E8;--ink:#1A2233;--mute:#5B6478;--card:#FBFCF8;--acc:#6A3FB5;--accs:#E6DCF7;--box:#FFF1BF;--ok:#1E8E5A;--bad:#C0392B;--line:#1A223322}
+@media (prefers-color-scheme:dark){:root{--bg:#12151F;--ink:#E7E9F3;--mute:#9AA3BA;--card:#1B2030;--acc:#B497F5;--accs:#2D2646;--box:#3A3320;--ok:#4FD08F;--bad:#FF7A6B;--line:#E7E9F322}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:'Bricolage Grotesque',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;
+background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:28px 28px}
+header{padding:28px 20px 8px;max-width:1150px;margin:auto}
+h1{font-size:clamp(2rem,5vw,3.4rem);font-weight:800;margin:0;letter-spacing:-.03em;line-height:1.05}
+h1 span{background:var(--acc);color:var(--card);padding:0 .25em;border-radius:6px}
+header p{color:var(--mute);margin:.6em 0 0;max-width:60ch}
+.wrap{max-width:1150px;margin:auto;padding:16px 20px 40px;display:grid;grid-template-columns:200px 1fr;gap:20px}
+nav{display:flex;flex-direction:column;gap:8px;align-self:start;position:sticky;top:12px}
+nav button{font:inherit;font-weight:600;text-align:left;padding:10px 12px;background:var(--card);color:var(--ink);border:2px solid var(--ink);border-radius:10px;cursor:pointer;display:flex;justify-content:space-between;gap:8px}
+nav button.on{background:var(--acc);color:var(--card);border-color:var(--acc)}
+nav button:focus-visible,.btn:focus-visible,textarea:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+nav button i{font-style:normal;opacity:0}
+nav button.done i{opacity:1}
+main{display:flex;flex-direction:column;gap:16px;min-width:0}
+.card{background:var(--card);border:2px solid var(--ink);border-radius:14px;padding:16px 18px}
+.card h2{margin:0 0 6px;font-size:1.5rem;letter-spacing:-.02em}
+.card p{margin:.4em 0;max-width:70ch}
+.goal{margin-top:10px;padding:10px 12px;border-left:5px solid var(--acc);background:var(--accs);border-radius:0 8px 8px 0;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.goal.ok{border-color:var(--ok)}
+.goal b.st{color:var(--mute)}
+.goal.ok b.st{color:var(--ok)}
+textarea{width:100%;min-height:230px;resize:vertical;font:400 .95rem/1.6 'JetBrains Mono',ui-monospace,monospace;background:#161B2B;color:#E6E9F5;border:2px solid var(--ink);border-radius:12px;padding:14px;tab-size:4}
+.bar{display:flex;gap:10px;margin:10px 0 0;flex-wrap:wrap;align-items:center}
+.btn{font:inherit;font-weight:700;padding:10px 18px;border-radius:10px;border:2px solid var(--ink);cursor:pointer;background:var(--card);color:var(--ink)}
+.btn.run{background:var(--acc);color:var(--card);border-color:var(--acc)}
+.btn:active{transform:translateY(1px)}
+.hint{color:var(--mute);font-size:.85rem}
+.panels{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.panel{min-height:200px}
+.panel h3{margin:0 0 10px;font-size:1rem}
+#mem{display:flex;flex-wrap:wrap;gap:10px;align-content:flex-start}
+.empty{color:var(--mute);font-size:.9rem}
+.box{background:var(--box);border:2px solid var(--ink);border-radius:8px;padding:6px 10px;min-width:96px;animation:pop .35s cubic-bezier(.3,1.6,.5,1) both}
+.box .ty{display:block;font:600 .7rem 'JetBrains Mono',monospace;color:var(--mute)}
+.box .nm{font-weight:800}
+.box .vl{display:block;font:600 1.1rem 'JetBrains Mono',monospace;margin-top:2px;word-break:break-all}
+.cells{display:flex;gap:4px;margin-top:4px}
+.cells span{display:flex;flex-direction:column;align-items:center;border:2px solid var(--ink);background:var(--card);border-radius:5px;padding:2px 8px;font:600 .95rem 'JetBrains Mono',monospace}
+.cells small{font-size:.65rem;color:var(--mute)}
+@keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+#out{background:#161B2B;color:#E6E9F5;border-radius:10px;padding:12px;font:400 .92rem/1.7 'JetBrains Mono',monospace;min-height:130px;white-space:pre-wrap;word-break:break-word}
+#out div{animation:in .25s both}
+#out .err{color:#FF8E80}
+@keyframes in{from{transform:translateX(-10px);opacity:0}to{transform:none;opacity:1}}
+@media(max-width:800px){.wrap{grid-template-columns:1fr}nav{flex-direction:row;flex-wrap:wrap;position:static}.panels{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Taller de <span>C#</span></h1>
+  <p>Escribe código, pulsa Ejecutar y mira cómo se llenan las cajas de memoria y la consola. Cada lección tiene un reto.</p>
+</header>
+<div class="wrap">
+  <nav id="nav" aria-label="Lecciones"></nav>
+  <main>
+    <section class="card">
+      <h2 id="title"></h2>
+      <div id="text"></div>
+      <div class="goal" id="goal"><span id="goalTxt"></span><b class="st" id="st">Pendiente</b></div>
+    </section>
+    <section>
+      <textarea id="code" spellcheck="false" aria-label="Editor de código C#"></textarea>
+      <div class="bar">
+        <button class="btn run" id="run">▶ Ejecutar</button>
+        <button class="btn" id="reset">Restaurar código</button>
+        <span class="hint">Atajo: Ctrl + Enter</span>
+      </div>
+    </section>
+    <div class="panels">
+      <section class="card panel"><h3>Memoria (variables)</h3><div id="mem"><span class="empty">Ejecuta el código para ver las variables.</span></div></section>
+      <section class="card panel"><h3>Consola (Console.WriteLine)</h3><div id="out"></div></section>
+    </div>
+    <p class="hint">Simulador didáctico: entiende lo básico de C# (variables, if, for, while, foreach, arreglos, listas y métodos) traduciéndolo a JavaScript. No reemplaza a Visual Studio o dotnet.</p>
+  </main>
+</div>
+<script>
+const LESSONS=[
+{t:'Variables',
+ d:'<p>Una <b>variable</b> es una caja con nombre y tipo donde guardas un dato. Tipos comunes: <code>int</code> (enteros), <code>double</code> (decimales), <code>string</code> (texto) y <code>bool</code> (verdadero o falso).</p><p>El signo <code>=</code> guarda un valor. Con <code>$"..."</code> puedes meter variables dentro de un texto usando llaves.</p>',
+ code:`string nombre = "Ana";
+int edad = 20;
+double altura = 1.65;
+bool esEstudiante = true;
+Console.WriteLine($"Hola, soy {nombre} y tengo {edad} años.");
+edad = edad + 1;
+Console.WriteLine($"El próximo año tendré {edad}.");`,
+ goal:'Cambia el nombre a "Luis" para que la consola salude a Luis.',
+ ok:o=>o.some(l=>l.includes('Hola, soy Luis'))},
+{t:'Condicionales',
+ d:'<p>Con <code>if</code>, <code>else if</code> y <code>else</code> el programa elige un camino según una condición. Los operadores de comparación son <code>==</code>, <code>!=</code>, <code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code> y <code>&lt;=</code>. Para combinar condiciones usa <code>&amp;&amp;</code> (y) y <code>||</code> (o).</p>',
+ code:`int nota = 8;
+if (nota >= 9) {
+    Console.WriteLine("Excelente");
+} else if (nota >= 6) {
+    Console.WriteLine("Aprobado");
+} else {
+    Console.WriteLine("Reprobado");
+}`,
+ goal:'Cambia el valor de nota para que la consola imprima "Reprobado".',
+ ok:o=>o[0]==='Reprobado'},
+{t:'Bucles',
+ d:'<p>Un <b>bucle</b> repite instrucciones. <code>for (inicio; condición; paso)</code> se usa cuando sabes cuántas vueltas dar; <code>while (condición)</code> repite mientras la condición sea verdadera.</p><p>Observa en la memoria cómo cambian <code>i</code> y <code>suma</code>.</p>',
+ code:`int suma = 0;
+for (int i = 1; i <= 5; i++) {
+    suma += i;
+    Console.WriteLine($"i = {i}, suma = {suma}");
+}`,
+ goal:'Haz que el bucle llegue hasta 10 para que la suma final sea 55.',
+ ok:o=>o.length&&o[o.length-1].includes('suma = 55')},
+{t:'Arreglos',
+ d:'<p>Un <b>arreglo</b> guarda varios valores del mismo tipo en posiciones numeradas que empiezan en <code>0</code>. <code>foreach</code> recorre cada elemento. <code>.Length</code> dice cuántos hay. También puedes usar <code>List&lt;int&gt;</code> y <code>.Add(valor)</code>.</p>',
+ code:`int[] numeros = {4, 8, 15, 16, 23};
+int total = 0;
+foreach (int n in numeros) {
+    total += n;
+}
+Console.WriteLine($"Total: {total}");
+Console.WriteLine($"Elementos: {numeros.Length}");`,
+ goal:'Agrega el número 42 al arreglo para que el total sea 108.',
+ ok:o=>o.some(l=>l==='Total: 108')},
+{t:'Métodos',
+ d:'<p>Un <b>método</b> es un bloque de código con nombre que puedes reutilizar. Indica el tipo que devuelve (<code>int</code>, <code>string</code>, <code>void</code> si no devuelve nada), recibe parámetros y usa <code>return</code> para entregar el resultado.</p>',
+ code:`static int Cuadrado(int x) {
+    return x * x;
+}
+
+static string Saludar(string quien) {
+    return "Hola, " + quien + "!";
+}
+
+int resultado = Cuadrado(7);
+Console.WriteLine(resultado);
+Console.WriteLine(Saludar("mundo"));`,
+ goal:'Añade una línea que imprima Cuadrado(12) usando el método.',
+ ok:o=>o.includes('144')}
+];
+
+const $=id=>document.getElementById(id);
+let cur=0,timers=[],done=new Set();
+
+function nav(){
+  $('nav').innerHTML='';
+  LESSONS.forEach((l,i)=>{
+    const b=document.createElement('button');
+    b.innerHTML=`<span>${i+1}. ${l.t}</span><i>✓</i>`;
+    b.className=(i===cur?'on ':'')+(done.has(i)?'done':'');
+    b.onclick=()=>load(i);
+    $('nav').appendChild(b);
+  });
+}
+function load(i){
+  cur=i;const l=LESSONS[i];
+  $('title').textContent=l.t;$('text').innerHTML=l.d;
+  $('code').value=l.code;$('goalTxt').textContent='Reto: '+l.goal;
+  clearAll();nav();status(false);
+}
+function clearAll(){
+  timers.forEach(clearTimeout);timers=[];
+  $('out').innerHTML='';
+  $('mem').innerHTML='<span class="empty">Ejecuta el código para ver las variables.</span>';
+}
+function status(ok){
+  $('goal').classList.toggle('ok',ok);
+  $('st').textContent=ok?'¡Reto cumplido!':'Pendiente';
+}
+
+/* Traductor mínimo C# -> JavaScript */
+const T='int|double|float|long|decimal|string|bool|char';
+function tr(s){
+  s=s.replace(/^\s*using .*;\s*$/gm,'');
+  s=s.replace(new RegExp('(?:static\\s+)?(?:'+T+'|void)\\s+(\\w+)\\s*\\(([^)]*)\\)\\s*\\{','g'),
+    (m,n,p)=>'function '+n+'('+p.replace(/\b\w+(?:\[\])?\s+(\w+)/g,'$1')+'){');
+  s=s.replace(/foreach\s*\(\s*\w+\s+(\w+)\s+in\s+([^)]+)\)/g,'for(var $1 of $2)');
+  s=s.replace(/List<\w+>\s+(\w+)\s*=\s*new List<\w+>\(\)/g,'var $1=[]');
+  s=s.replace(/\b\w+\[\]\s+(\w+)\s*=\s*\{([^}]*)\}/g,'var $1=[$2]');
+  s=s.replace(/new \w+\[\]\s*\{([^}]*)\}/g,'[$1]');
+  s=s.replace(/new \w+\[(\w+)\]/g,'new Array($1).fill(0)');
+  s=s.replace(new RegExp('\\b(?:'+T+')(?:\\[\\])?\\s+(\\w+)\\s*(=|;)','g'),'var $1$2');
+  s=s.replace(/\$"((?:[^"\\]|\\.)*)"/g,(m,a)=>'`'+a.replace(/`/g,'\\`').replace(/\{([^}]+)\}/g,'${$1}')+'`');
+  s=s.replace(/Console\.WriteLine\(/g,'__w(').replace(/Console\.Write\(/g,'__wn(');
+  s=s.replace(/Math\.(\w)/g,(m,c)=>'Math.'+c.toLowerCase());
+  s=s.replace(/\.Length\b/g,'.length').replace(/\.Count\b/g,'.length').replace(/\.Add\(/g,'.push(');
+  s=s.replace(/\.ToUpper\(\)/g,'.toUpperCase()').replace(/\.ToLower\(\)/g,'.toLowerCase()');
+  s=s.replace(/string\.Join\(([^,]+),\s*([^)]+)\)/g,'$2.join($1)');
+  s=s.replace(/while\s*\(([^)]*)\)/g,'while(__g()&&($1))');
+  s=s.replace(/for\s*\(([^;)]*);([^;]*);/g,'for($1;__g()&&($2);');
+  return s;
+}
+const fmt=v=>typeof v==='boolean'?(v?'True':'False'):Array.isArray(v)?'{'+v.map(fmt).join(', ')+'}':String(v);
+
+function run(){
+  clearAll();
+  const src=$('code').value,js=tr(src),lines=[];
+  let cnt=0,buf='';
+  const push=t=>lines.push(t);
+  const __w=v=>{push(buf+fmt(v));buf=''};
+  const __wn=v=>{buf+=fmt(v)};
+  const __g=()=>{if(++cnt>5000)throw new Error('Bucle infinito: más de 5000 vueltas');return true};
+  const types={};
+  src.replace(new RegExp('\\b('+T+'|var)(\\[\\])?\\s+(\\w+)\\s*(?:=|;|in\\b)','g'),(m,t,a,n)=>{types[n]=t+(a||'');return m});
+  src.replace(/List<(\w+)>\s+(\w+)/g,(m,t,n)=>{types[n]='List<'+t+'>';return m});
+  const names=[...new Set([...js.matchAll(/\bvar\s+(\w+)/g)].map(m=>m[1]))];
+  let vars={},err=null;
+  try{
+    vars=new Function('__w','__wn','__g',js+'\n;return {'+names.map(n=>`${n}:(typeof ${n}==="undefined"?undefined:${n})`).join(',')+'}')(__w,__wn,__g);
+  }catch(e){
+    err=e.message.includes('is not defined')||e instanceof SyntaxError
+      ?'No se pudo ejecutar: revisa la sintaxis (¿falta un ; o una llave?). Detalle: '+e.message:e.message;
+  }
+  if(buf)push(buf);
+  lines.forEach((t,i)=>timers.push(setTimeout(()=>{
+    const d=document.createElement('div');d.textContent=t;$('out').appendChild(d);
+  },i*220)));
+  if(err)timers.push(setTimeout(()=>{
+    const d=document.createElement('div');d.className='err';d.textContent='⚠ '+err;$('out').appendChild(d);
+  },lines.length*220));
+  const mem=$('mem');mem.innerHTML='';
+  const shown=names.filter(n=>vars[n]!==undefined);
+  if(!shown.length)mem.innerHTML='<span class="empty">Este código no creó variables.</span>';
+  shown.forEach((n,i)=>{
+    const v=vars[n];
+    const ty=types[n]&&types[n]!=='var'?types[n]:Array.isArray(v)?'int[]':typeof v==='number'?(Number.isInteger(v)?'int':'double'):typeof v==='boolean'?'bool':'string';
+    const b=document.createElement('div');b.className='box';b.style.animationDelay=(i*90)+'ms';
+    const body=Array.isArray(v)
+      ?'<div class="cells">'+v.map((x,k)=>`<span>${fmt(x)}<small>[${k}]</small></span>`).join('')+'</div>'
+      :`<span class="vl">${typeof v==='string'?'"'+esc(v)+'"':fmt(v)}</span>`;
+    b.innerHTML=`<span class="ty">${esc(ty)}</span><span class="nm">${esc(n)}</span>${body}`;
+    mem.appendChild(b);
+  });
+  status(!err&&LESSONS[cur].ok(lines));
+  if(!err&&LESSONS[cur].ok(lines)){done.add(cur);nav()}
+}
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+$('run').onclick=run;
+$('reset').onclick=()=>{$('code').value=LESSONS[cur].code;clearAll();status(false)};
+$('code').addEventListener('keydown',e=>{
+  if(e.key==='Tab'){e.preventDefault();const t=e.target,s=t.selectionStart;
+    t.value=t.value.slice(0,s)+'    '+t.value.slice(t.selectionEnd);t.selectionStart=t.selectionEnd=s+4}
+  if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();run()}
+});
+load(0);
+</script>
+</body>
+</html>
